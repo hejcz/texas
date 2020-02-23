@@ -11,14 +11,12 @@ TCP_PORT = 5005
 BUFFER_SIZE = 20  # Normally 1024, but we want fast response
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.settimeout(2)
 s.bind((TCP_IP, TCP_PORT))
 
-
-def close_server_handler(sig, frame):
-    s.close()
-
-
 open_connections = {}
+threads = {}
+close_sessions = False
 
 
 def broadcast(msg):
@@ -41,24 +39,47 @@ class SessionThread(threading.Thread):
 
     def run(self) -> None:
         while True:
-            data = self.connection.recv(BUFFER_SIZE)
+            if close_sessions:
+                break
+            try:
+                data = self.connection.recv(BUFFER_SIZE)
+            except socket.timeout:
+                continue
             if not data:
                 del open_connections[self.player_id]
-                return
+                break
             print("received data:", data)
             game.raise_money(self.player_id, 10)
 
 
 while True:
-    s.listen(1)
-    conn, address = s.accept()
-    print('Connection address:', address)
+    try:
+        s.listen(1)
+        new_connection = None
+        while True:
+            try:
+                conn, _ = s.accept()
+                new_connection = conn
+                new_connection.settimeout(2)
+                break
+            except socket.timeout:
+                continue
 
-    lock.acquire()
-    client_id = id_counter
-    id_counter += 1
-    lock.release()
+        lock.acquire()
+        client_id = id_counter
+        id_counter += 1
+        lock.release()
 
-    open_connections[client_id] = conn
-    conn.send(bytearray('Your id is ' + str(client_id), "UTF-8"))
-    SessionThread(conn, client_id).start()
+        open_connections[client_id] = new_connection
+        new_connection.send(bytearray('Your id is ' + str(client_id), "UTF-8"))
+        thread = SessionThread(new_connection, client_id)
+        threads[client_id] = thread
+        thread.start()
+    except KeyboardInterrupt:
+        break
+
+s.close()
+close_sessions = True
+
+for t in threads:
+    threads[t].join()
