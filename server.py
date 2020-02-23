@@ -43,13 +43,15 @@ class SessionThread(threading.Thread):
                 break
             try:
                 data = self.connection.recv(BUFFER_SIZE)
+                if not data:
+                    del open_connections[self.player_id]
+                    break
+                print("received data:", data)
+                game.raise_money(self.player_id, 10)
             except socket.timeout:
-                continue
-            if not data:
-                del open_connections[self.player_id]
+                pass
+            except ConnectionResetError:
                 break
-            print("received data:", data)
-            game.raise_money(self.player_id, 10)
 
 
 while True:

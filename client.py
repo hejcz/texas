@@ -23,6 +23,8 @@ class Reader(threading.Thread):
                 print(str(data, "UTF-8"))
             except socket.timeout:
                 pass
+            except ConnectionResetError:
+                break
 
 
 reader = Reader()
