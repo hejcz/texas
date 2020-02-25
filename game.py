@@ -12,13 +12,22 @@ class Game:
         self.send_to_single(player_id, "ok")
 
     def check(self, player_id):
+        self.send_to_all(player_id, "checks")
         pass
 
     def skip(self, player_id):
         pass
 
     def start_game(self, player_id):
-        self.send_to_all()
+        self.send_to_all("Let's start the game")
+        pass
+
+    def fold(self, player_id):
+        self.send_to_all(player_id, "has folded")
+        pass
+
+    def call(self, player_id, amount):
+        self.send_to_all(player_id, "you spent {}".format(amount))
         pass
 
     def check_cards(self, player_id):
