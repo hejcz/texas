@@ -18,6 +18,7 @@ class Game:
         pass
 
     def start_game(self, player_id):
+        self.send_to_all()
         pass
 
     def check_cards(self, player_id):
