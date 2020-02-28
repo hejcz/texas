@@ -9,7 +9,7 @@ class Game:
         self.send_to_single = send_to_single
 
     def raise_money(self, player_id, amount):
-        self.send_to_single(player_id, "ok")
+        self.send_to_all("Player {} raised by {}".format(player_id, amount))
 
     def check(self, player_id):
         self.send_to_all(player_id, "checks")
@@ -24,7 +24,7 @@ class Game:
         pass
 
     def call(self, player_id, amount):
-        self.send_to_all(player_id, "you spent {}".format(amount))
+        self.send_to_single(player_id, "you spent {}".format(amount))
         pass
 
     def check_cards(self, player_id):

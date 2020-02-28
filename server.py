@@ -1,4 +1,5 @@
 import socket
+import re
 import threading
 
 from game import Game
@@ -46,12 +47,24 @@ class SessionThread(threading.Thread):
                 if not data:
                     del open_connections[self.player_id]
                     break
-                print("received data:", data)
-                game.raise_money(self.player_id, 10)
+                command = str(data, "UTF-8")
+                print("received data:", command)
+                self.call_game_function(command)
             except socket.timeout:
                 pass
             except ConnectionResetError:
                 break
+
+
+    def call_game_function(self, command):
+        raise_regex = re.compile("^raise ([0-9]+)$")
+        if command == "start":
+            game.start_game()
+        elif bool(raise_regex.match(command)):
+            match = raise_regex.match(command)
+            game.raise_money(self.player_id, int(match.group(1)))
+        else:
+            broadcast("invalid command")
 
 
 while True:
