@@ -15,10 +15,7 @@ class Game:
         self.send_to_all(player_id, "checks")
         pass
 
-    def skip(self, player_id):
-        pass
-
-    def start_game(self, player_id):
+    def start_game(self):
         self.send_to_all("Let's start the game")
         pass
 
