@@ -3,6 +3,8 @@ import re
 import threading
 
 from game import Game
+from game import Card
+from game import Deck
 
 lock = threading.Lock()
 id_counter = 0

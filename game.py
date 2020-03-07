@@ -29,3 +29,35 @@ class Game:
 
     def check_cards(self, player_id):
         pass
+
+
+class Card:
+
+    def __init__(self, suit, number):
+        self._suit = suit
+        self._number = number
+
+    def __repr__(self):
+        return self._number + " of " + self._suit
+
+    def suit(self):
+        return self._suit
+
+
+class Deck:
+
+    def __init__(self):
+        self._cards = []
+        self.populate()
+        print(self._cards)
+
+    def populate(self):
+        suits = ["hearts", "diamonds", "clubs", "spades"]
+        numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
+
+        cards = []
+        for s in suits:
+            for n in numbers:
+                cards.append(Card(suit, number))
+
+        self._cards = cards
