@@ -3,8 +3,6 @@ import re
 import threading
 
 from game import Game
-from game import Card
-from game import Deck
 
 lock = threading.Lock()
 id_counter = 0
@@ -56,7 +54,6 @@ class SessionThread(threading.Thread):
                 pass
             except ConnectionResetError:
                 break
-
 
     def call_game_function(self, command):
         raise_regex = re.compile("^raise ([0-9]+)$")
